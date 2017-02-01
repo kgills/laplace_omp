@@ -27,8 +27,8 @@
 #include <omp.h>
 
 // size of plate
-#define COLUMNS    (0x1 << 10)
-#define ROWS       (0x1 << 10)
+#define COLUMNS    (2048)
+#define ROWS       (2048)
 
 // #define COLUMNS    (0x1 << 15)
 // #define ROWS       (0x1 << 15)
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
     int iteration=0;                                     // current iteration
     double dt=100;                                       // largest change in t
     double etime;
+    double flops;
     struct timeval start_time, stop_time, elapsed_time;  // timers
 
     // printf("omp_get_num_procs = %d\n", omp_get_num_procs());
@@ -67,6 +68,7 @@ int main(int argc, char *argv[]) {
 
         // main calculation: average my four neighbors
         #pragma omp parallel for private(i,j) schedule(static)
+        // #pragma omp parallel for private(i,j)
         for(i = 1; i <= ROWS; i++) {
             for(j = 1; j <= COLUMNS; j++) {
                 Temperature[i][j] = 0.25 * (Temperature_last[i+1][j] + Temperature_last[i-1][j] +
@@ -78,12 +80,18 @@ int main(int argc, char *argv[]) {
 
         // copy grid to old grid for next iteration and find latest dt
         #pragma omp parallel for reduction(max:dt) private(i,j) schedule(static)
+        // #pragma omp parallel for reduction(max:dt) private(i,j)
         for(i = 1; i <= ROWS; i++){
             for(j = 1; j <= COLUMNS; j++){
                 dt = fmax( fabs(Temperature[i][j]-Temperature_last[i][j]), dt);
                 Temperature_last[i][j] = Temperature[i][j];
             }
         }
+
+        // periodically print test values
+       	// if((iteration % 100) == 0) {
+        // 	track_progress(iteration);
+        // }
 
         iteration++;
     }
@@ -94,8 +102,10 @@ int main(int argc, char *argv[]) {
     // printf("\nMax error at iteration %d was %f\n", iteration, dt);
 
     etime = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
+    flops = ((double)iteration*(double)ROWS*(double)COLUMNS*(double)5.0)/etime;
     // printf("Total time was %f seconds.\n", etime);
-    printf("%f, %f\n", etime, (iteration*ROWS*COLUMNS*5)/etime);
+    printf("%d, %d, %f, %f\n",iteration, ROWS, etime, flops);
+    return 0;
 }
 
 
