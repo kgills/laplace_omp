@@ -7,3 +7,4 @@ all: laplace.c
 
 clean:
 	@rm -f $(OUTPUT)
+	@rm -f slurm*

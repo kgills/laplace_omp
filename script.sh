@@ -9,7 +9,7 @@
 
 ITERS=$(seq 1 10)
 CORES="28"
-FILE_NAME="static_2048"
+FILE_NAME="static_pgcc_2048"
 
 for CORE in ${CORES}
 do
