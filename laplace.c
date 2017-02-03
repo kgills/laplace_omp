@@ -27,8 +27,8 @@
 #include <omp.h>
 
 // size of plate
-#define COLUMNS    (2048)
-#define ROWS       (2048)
+#define COLUMNS    (1024)
+#define ROWS       (1024)
 
 // #define COLUMNS    (0x1 << 15)
 // #define ROWS       (0x1 << 15)
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     etime = elapsed_time.tv_sec+elapsed_time.tv_usec/1000000.0;
     flops = ((double)iteration*(double)ROWS*(double)COLUMNS*(double)5.0)/etime;
     // printf("Total time was %f seconds.\n", etime);
-    printf("%d, %d, %f, %f\n",iteration, ROWS, etime, flops);
+    printf("%d, %d, %f, %f, %d\n",iteration, ROWS, etime, flops, omp_get_max_threads());
     return 0;
 }
 
