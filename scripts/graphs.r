@@ -1,6 +1,6 @@
 library(Hmisc)
 
-core_all = read.csv("../data/static_core_all.txt")
+core_all = read.csv("../data/serial_small_all.txt")
 perf_28 = read.csv("../data/static_sleep_28_2048_28.txt")
 
 # Convert FLOPS to GFLOPS
@@ -14,14 +14,14 @@ perf_28$flops = perf_28$flops/1000000000
 core_flops_ag = aggregate(flops~cores, core_all, mean)
 
 # Add the speedup
-core_flops_ag$speedup = core_flops_ag$flops/core_flops_ag$flops[2]
+core_flops_ag$speedup = core_flops_ag$flops/core_flops_ag$flops[1]
 
 # Add the serial portion
 core_flops_ag$serial = (core_flops_ag$speedup - core_flops_ag$cores)/(1 - core_flops_ag$cores)
 
 # Add the efficiency 
 # core_flops_ag$efficiency = (((1/core_flops_ag$speedup)-(core_flops_ag$cores))\(1 - (1/core_flops_ag$cores)))
-core_flops_ag$efficiency = (((1/core_flops_ag$speedup)-(1/core_flops_ag$cores))/(1 - (1/core_flops_ag$cores)))
+core_flops_ag$karp = (((1/core_flops_ag$speedup)-(1/core_flops_ag$cores))/(1 - (1/core_flops_ag$cores)))
 
 core_flops_format = format.df(core_flops_ag, digits=3)
 core_flops_format = core_flops_format[,-1]
@@ -37,5 +37,10 @@ core_flops_format = core_flops_format[,-1]
 # latex(summary(perf_28$flops), title="28 Cores, 100 iterations")
 
 # latex(core_flops_format)
+
+# Create plot for the karp-flatt metic
+pdf("karp_flatt_graph_subset.pdf", width=7, height=7)
+plot(karp~cores, core_flops_ag)
+dev.off()
 
 
