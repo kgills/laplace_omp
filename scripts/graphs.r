@@ -1,7 +1,7 @@
 library(Hmisc)
 
-core_all = read.csv("../data/serial_small_all.txt")
-perf_28 = read.csv("../data/static_sleep_28_2048_28.txt")
+core_all = read.csv("../data/static_core_all.txt")
+perf_28 = read.csv("../data/large_28.txt")
 
 # Convert FLOPS to GFLOPS
 core_all$flops = core_all$flops /1000000000
@@ -28,7 +28,7 @@ core_flops_format = core_flops_format[,-1]
 
 
 # Create box plots for the core_all flops
-# pdf("core_all.pdf", width=7, height=5)
+# png("core_all.png", width=600, height=500)
 # boxplot(flops~cores, core_all, main="Cores vs FLOPS (10 iterations)", xlab="Cores", 
 # 	ylab="Giga FLOPS", col="light blue")
 # dev.off()
@@ -39,8 +39,8 @@ core_flops_format = core_flops_format[,-1]
 # latex(core_flops_format)
 
 # Create plot for the karp-flatt metic
-pdf("karp_flatt_graph_subset.pdf", width=7, height=7)
-plot(karp~cores, core_flops_ag)
-dev.off()
+# png("karp_flatt_graph.png")
+# plot(karp~cores, core_flops_ag)
+# dev.off()
 
 
